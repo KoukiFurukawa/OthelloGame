@@ -16,9 +16,9 @@ func (g *Game) StartGame() {
 }
 
 func (g *Game) EndGame() {
-	g.Status = -1
 	g.ShowBoard()
 	g.CountBoard()
+	g.Status = -1
 }
 
 func (g *Game) SwapBoard() {

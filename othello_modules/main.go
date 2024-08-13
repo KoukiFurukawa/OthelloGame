@@ -32,7 +32,6 @@ func main() {
 
 		// 終局判定 --------------------------------------
 		if game.IsEnd() {
-			game.SwapBoard()
 			game.EndGame()
 			break
 		}
