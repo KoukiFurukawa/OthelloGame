@@ -1,6 +1,7 @@
 package process
 
 import (
+	"fmt"
 	"main/utils"
 )
 
@@ -54,12 +55,13 @@ func Put(playerBoard uint64, opponentBoard uint64, put uint64) (uint64, uint64) 
 
 func (g *Game) Search(depth uint8) uint64 {
 
-	var MiniMax func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool) int
-	MiniMax = func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool) int {
+	var NegaMax func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool) int
+	NegaMax = func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool) int {
 
 		// 葉に辿り着いたら評価 -----------------------------------------------------
 		if depth == 0 {
 			playerScore, _ := Evaluation(playerBoard, opponentBoard)
+			fmt.Println(playerScore)
 			return playerScore
 		}
 
@@ -72,8 +74,9 @@ func (g *Game) Search(depth uint8) uint64 {
 		for i := 0; i < 64; i++ {
 			place = mask >> i
 			if legalBoard&place == place {
+				fmt.Println(ConvertPutToString(place))
 				newPlayerBoard, newOpponentBoard = Put(playerBoard, opponentBoard, place)
-				maxScore = max(maxScore, -MiniMax(newPlayerBoard, newOpponentBoard, depth-1, false))
+				maxScore = max(maxScore, -NegaMax(newPlayerBoard, newOpponentBoard, depth-1, false))
 			}
 		}
 
@@ -85,11 +88,12 @@ func (g *Game) Search(depth uint8) uint64 {
 				return playerScore
 			}
 			playerBoard, opponentBoard = SwapBoard(playerBoard, opponentBoard)
-			return -MiniMax(playerBoard, opponentBoard, depth, true)
+			return -NegaMax(playerBoard, opponentBoard, depth, true)
 		}
 		return maxScore
 	}
 
+	// 処理 ------------------------------------------------------------------------------
 	var res uint64
 	maxScore := -inf
 	legalBoard := MakeLegalBoard(g.board.PlayerBoard, g.board.OpponentBoard)
@@ -98,8 +102,9 @@ func (g *Game) Search(depth uint8) uint64 {
 	for i := 0; i < 64; i++ {
 		place = mask >> i
 		if legalBoard&place == place {
+			fmt.Println(ConvertPutToString(place))
 			newPlayerBoard, newOpponentBoard = Put(g.board.PlayerBoard, g.board.OpponentBoard, place)
-			score := max(maxScore, -MiniMax(newPlayerBoard, newOpponentBoard, depth-1, false))
+			score := -NegaMax(newPlayerBoard, newOpponentBoard, depth-1, false)
 			if maxScore < score {
 				maxScore = score
 				res = place
@@ -108,3 +113,7 @@ func (g *Game) Search(depth uint8) uint64 {
 	}
 	return res
 }
+
+// 0のとき最大値を返すようにする
+// 1のとき f5 配置
+// node-2 ... -7(f4), -8(d6), -6(f6)

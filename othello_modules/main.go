@@ -46,7 +46,7 @@ func main() {
 
 		if game.Status == 1 {
 
-			put = game.Search(3)
+			put = game.Search(4)
 			fmt.Println(process.ConvertPutToString(put))
 
 		} else if game.Status == 0 {
