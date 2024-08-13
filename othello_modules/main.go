@@ -15,7 +15,6 @@ func main() {
 		})
 	})
 
-	var prev uint64
 	var put uint64
 
 	game := process.InitializeGame()
@@ -33,6 +32,7 @@ func main() {
 
 		// 終局判定 --------------------------------------
 		if game.IsEnd() {
+			game.SwapBoard()
 			game.EndGame()
 			break
 		}
@@ -41,12 +41,14 @@ func main() {
 		if game.IsPass() {
 			fmt.Println("置ける場所がありません。")
 			game.SwapBoard()
+			game.Status = 1 - game.Status
 			continue
 		}
 
 		if game.Status == 1 {
 
-			put = prev
+			put = game.Search(3)
+			fmt.Println(process.ConvertPutToString(put))
 
 		} else if game.Status == 0 {
 
@@ -59,7 +61,6 @@ func main() {
 
 			// 置く ------------------------------------------
 			put = process.ConvertToBit(i, j)
-			prev = put
 			if !game.CanPut(put) {
 				fmt.Println("can't put")
 				continue

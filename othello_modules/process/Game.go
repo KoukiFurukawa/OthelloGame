@@ -36,18 +36,14 @@ func InitializeGame() Game {
 }
 
 func (g *Game) IsPass() bool {
-	playerLegalBoard := g.MakeLegalBoard()
-	g.SwapBoard()
-	opponentLegalBoard := g.MakeLegalBoard()
-	g.SwapBoard()
+	playerLegalBoard := MakeLegalBoard(g.board.PlayerBoard, g.board.OpponentBoard)
+	opponentLegalBoard := MakeLegalBoard(g.board.OpponentBoard, g.board.PlayerBoard)
 	return playerLegalBoard == 0x0000000000000000 && opponentLegalBoard != 0x0000000000000000
 }
 
 func (g *Game) IsEnd() bool {
-	playerLegalBoard := g.MakeLegalBoard()
-	g.SwapBoard()
-	opponentLegalBoard := g.MakeLegalBoard()
-	g.SwapBoard()
+	playerLegalBoard := MakeLegalBoard(g.board.PlayerBoard, g.board.OpponentBoard)
+	opponentLegalBoard := MakeLegalBoard(g.board.OpponentBoard, g.board.PlayerBoard)
 	return playerLegalBoard == 0x0000000000000000 && opponentLegalBoard == 0x0000000000000000
 }
 
@@ -116,4 +112,17 @@ func (g *Game) CountBoard() {
 	} else {
 		fmt.Println("⚪️の勝ち")
 	}
+}
+
+func ConvertPutToString(put uint64) string {
+	allowedFirstString := []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+	allowedSecondString := []string{"1", "2", "3", "4", "5", "6", "7", "8"}
+	var res string
+	for i := 0; i < 64; i++ {
+		if put&(1<<(63-i)) != 0 {
+			res += allowedFirstString[i%8]
+			res += allowedSecondString[i/8]
+		}
+	}
+	return res
 }

@@ -34,10 +34,10 @@ func (b *Board) PlacingFrame(put uint64) {
 	var rev uint64
 	for k := 0; k < 8; k++ {
 		var rev_ uint64
-		mask := transfer(put, k)
+		mask := Transfer(put, k)
 		for (mask != 0) && ((mask & b.OpponentBoard) != 0) {
 			rev_ |= mask
-			mask = transfer(mask, k)
+			mask = Transfer(mask, k)
 		}
 		if (mask & b.PlayerBoard) != 0 {
 			rev |= rev_
@@ -49,7 +49,7 @@ func (b *Board) PlacingFrame(put uint64) {
 }
 
 // 8方向にシフトするヘルパー関数
-func transfer(put uint64, k int) uint64 {
+func Transfer(put uint64, k int) uint64 {
 	switch k {
 	case 0: //上
 		return (put << 8) & 0xffffffffffffff00
