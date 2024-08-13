@@ -22,7 +22,7 @@ func (g *Game) EndGame() {
 }
 
 func (g *Game) IsFinalStage() bool {
-	return g.board.Total > 50
+	return g.board.Total > 64
 }
 
 func (g *Game) SwapBoard() {

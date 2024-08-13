@@ -48,7 +48,7 @@ func main() {
 			if game.IsFinalStage() {
 				put = game.LastSearch(15)
 			} else {
-				put = game.Search(8)
+				put = game.NegaAlphaSearch(8)
 			}
 			fmt.Println(process.ConvertPutToString(put))
 

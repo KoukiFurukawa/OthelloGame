@@ -133,6 +133,71 @@ func (g *Game) Search(depth uint8) uint64 {
 	return res
 }
 
+func (g *Game) NegaAlphaSearch(depth uint8) uint64 {
+
+	var NegaAlpha func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool, alpha int, beta int) int
+	NegaAlpha = func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool, alpha int, beta int) int {
+
+		// 葉に辿り着いたら評価 -----------------------------------------------------
+		if depth == 0 {
+			playerScore, _ := Evaluation(playerBoard, opponentBoard)
+			return playerScore
+		}
+
+		maxScore := -inf
+
+		// 葉ノードでなければ子ノードに対して再帰 -------------------------------------
+		legalBoard := MakeLegalBoard(playerBoard, opponentBoard)
+		mask := uint64(0x8000000000000000)
+		var newPlayerBoard, newOpponentBoard, place uint64
+		var g int
+		for i := 0; i < 64; i++ {
+			place = mask >> i
+			if legalBoard&place == place {
+				newPlayerBoard, newOpponentBoard = Put(playerBoard, opponentBoard, place)
+				g = -NegaAlpha(newPlayerBoard, newOpponentBoard, depth-1, false, -beta, -alpha)
+				if g >= beta {
+					return g
+				}
+				alpha = max(alpha, g)
+				maxScore = max(maxScore, g)
+			}
+		}
+
+		// パスの処理 手番を交代して同じ深さで再帰する ----------------------------------------------------
+		if maxScore == -inf {
+			// 2回連続パスなら評価関数を実行
+			if passed {
+				playerScore, _ := Evaluation(playerBoard, opponentBoard)
+				return playerScore
+			}
+			playerBoard, opponentBoard = SwapBoard(playerBoard, opponentBoard)
+			return -NegaAlpha(playerBoard, opponentBoard, depth, true, -beta, -alpha)
+		}
+		return maxScore
+	}
+
+	// 処理 ------------------------------------------------------------------------------
+	var res uint64
+	alpha := -inf
+	beta := inf
+	legalBoard := MakeLegalBoard(g.board.PlayerBoard, g.board.OpponentBoard)
+	mask := uint64(0x8000000000000000)
+	var newPlayerBoard, newOpponentBoard, place uint64
+	for i := 0; i < 64; i++ {
+		place = mask >> i
+		if legalBoard&place == place {
+			newPlayerBoard, newOpponentBoard = Put(g.board.PlayerBoard, g.board.OpponentBoard, place)
+			score := -NegaAlpha(newPlayerBoard, newOpponentBoard, depth-1, false, -beta, -alpha)
+			if alpha < score {
+				alpha = score
+				res = place
+			}
+		}
+	}
+	return res
+}
+
 func (g *Game) LastSearch(depth uint8) uint64 {
 
 	var NegaMax func(playerBoard uint64, opponentBoard uint64, depth uint8, passed bool) int
