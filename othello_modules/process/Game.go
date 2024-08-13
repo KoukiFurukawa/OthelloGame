@@ -21,6 +21,10 @@ func (g *Game) EndGame() {
 	g.Status = -1
 }
 
+func (g *Game) IsFinalStage() bool {
+	return g.board.Total > 50
+}
+
 func (g *Game) SwapBoard() {
 	tmp := g.board.PlayerBoard
 	g.board.PlayerBoard = g.board.OpponentBoard

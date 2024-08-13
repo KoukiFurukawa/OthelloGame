@@ -1,5 +1,7 @@
 package process
 
+import "fmt"
+
 func ConvertToBit(i int, j int) uint64 {
 	mask := uint64(0x8000000000000000)
 	mask >>= j
@@ -16,6 +18,21 @@ func (g *Game) Reverse(put uint64) {
 	g.board.PlacingFrame(put)
 	g.Status = 1 - g.Status
 	g.board.Total += 1
+}
+
+func (g *Game) CanPutList() {
+	var place uint64
+	var placeString string
+	for i := 0; i < 8; i++ {
+		for j := 0; j < 8; j++ {
+			place = ConvertToBit(i, j)
+			if g.CanPut(place) {
+				placeString = ConvertPutToString(place)
+				fmt.Printf("%s, ", placeString)
+			}
+		}
+	}
+	fmt.Println()
 }
 
 func MakeLegalBoard(PlayerBoard uint64, OpponentBoard uint64) uint64 {

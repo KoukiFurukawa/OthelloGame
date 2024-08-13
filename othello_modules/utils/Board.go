@@ -15,7 +15,7 @@ type Board struct {
 func (b *Board) BoardReset() {
 	b.PlayerBoard = 0x0000000810000000
 	b.OpponentBoard = 0x0000001008000000
-	b.Total = 0
+	b.Total = 4
 }
 
 func (b *Board) BoardID() {

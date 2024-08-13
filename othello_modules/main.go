@@ -45,11 +45,17 @@ func main() {
 		}
 
 		if game.Status == 1 {
-
-			put = game.Search(4)
+			if game.IsFinalStage() {
+				put = game.LastSearch(15)
+			} else {
+				put = game.Search(8)
+			}
 			fmt.Println(process.ConvertPutToString(put))
 
 		} else if game.Status == 0 {
+
+			fmt.Println("配置可能マス")
+			game.CanPutList()
 
 			// 入力受付 ---------------------------------------
 			j, i, err := process.ScanUserInput()
